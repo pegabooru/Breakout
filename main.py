@@ -27,6 +27,7 @@ blocksNumX = 7
 blocksNumY = 3
 
 plyMoving = False
+running = False
 
 # Functions
 def spawnBlock(): # Spawn and initialize blocks
@@ -68,31 +69,27 @@ def gameSpawn():
         currentX+=blocksWd/2
 
 def moveBall():
-  running2 = True
-  while (True and running2):
-    ball.forward(4)
-def moveBall2():
   running = True
   while (True and running):
-    ball.forward(2)
+    if (plyMoving):
+      ball.forward(4)
+      print(plyMoving)
+    else:
+      ball.forward(2)
+      print(plyMoving)
 runBall = threading.Thread(target=moveBall)
-runBall2 = threading.Thread(target=moveBall2)
 
 def paddleLeft(): # Move player left and right
   ply.goto(ply.xcor()-15,ply.ycor())
   if (running == False):
-    runball.stop()
-    runball2.start()
+    runBall.start()
 def paddleRight():
   ply.goto(ply.xcor()+15,ply.ycor())
   if (running == False):
-    runBall.stop()
-    runBall2.start()
+    runBall.start()
 def releaseKey():
+  global plyMoving
   plyMoving = False
-  if (running == False):
-    runBall2.stop()
-    runball.start()
 
 
 ply = trtl.Turtle()
@@ -113,8 +110,6 @@ if (dir == 0):
 elif (dir == 1):
   ball.left(135)
   plyMoving = True
-
-runBall.start()
 
 wn.onkeypress(paddleLeft, "a")
 wn.onkeypress(paddleRight, "d")
