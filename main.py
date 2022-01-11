@@ -21,11 +21,11 @@ wn.addshape(ballImg)
 blocks = []
 blocksX = []
 blocksY = []
-blocksWd = 30
-blocksHt = 10
-blocksGap = 10
-blocksNumX = 7
-blocksNumY = 3
+blocksWd = 50
+blocksHt = 20
+blocksGap = 4
+blocksNumX = 17
+blocksNumY = 7
 
 ballSpeed = 4
 
@@ -46,21 +46,21 @@ def gameSpawn():
     incrementX=blocksWd+blocksGap
     incrementY=blocksHt+blocksGap
     currentX=(-totalWd)/2
-    currentY=((-totalHt)/2)+500
+    currentY=((-totalHt)/2)+200
     currentX+=blocksWd/2
     currentY+=blocksHt/2
     counterX=0
     counterY=0
-    while counterY<3:
+    while counterY<blocksNumY:
         counterY+=1
         currentY+=incrementY
         if counterY==0:
-            currentShape=blocksImg
+            currentShape="img/green.gif"
         elif counterY==1:
-            pass
+            currentShape="img/yellow.gif"
         elif counterY==2:
-            pass
-        while counterX<7:
+            currentShape="img/red.gif"
+        while counterX<blocksNumX:
             counterX+=1
             blockName=str(counterX),str(counterY)
             blockName=trtl.Turtle
