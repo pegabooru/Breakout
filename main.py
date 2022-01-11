@@ -53,11 +53,11 @@ def gameSpawn():
         counterY+=1
         currentY+=incrementY
         if counterY==0:
-            currentShape=blocksImg
+            currentShape="img/green.gif"
         elif counterY==1:
-            pass
+            currentShape="img/yellow.gif"
         elif counterY==2:
-            pass
+            currentShape="img/red.gif"
         while counterX<7:
             counterX+=1
             blockName=str(counterX),str(counterY)
