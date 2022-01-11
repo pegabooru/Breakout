@@ -1,6 +1,7 @@
 # Imports
 import turtle as trtl
 import random as rand
+import threading
 
 # Init. turtle stuff
 wn = trtl.Screen()
@@ -22,6 +23,8 @@ blocksY = []
 blocksWd = 30
 blocksHt = 10
 
+plyMoving = False
+
 # Functions
 def spawnBlock(): # Spawn and initialize blocks
   block = trtl.Turtle()
@@ -30,10 +33,33 @@ def spawnBlock(): # Spawn and initialize blocks
   block.speed(0)
   blocks.append(block)
 
+def moveBall():
+  running2 = True
+  while (True and running2):
+    ball.forward(4)
+def moveBall2():
+  running = True
+  while (True and running):
+    ball.forward(2)
+runBall = threading.Thread(target=moveBall)
+runBall2 = threading.Thread(target=moveBall2)
+
 def paddleLeft(): # Move player left and right
   ply.goto(ply.xcor()-15,ply.ycor())
+  if (running == False):
+    runball.stop()
+    runball2.start()
 def paddleRight():
   ply.goto(ply.xcor()+15,ply.ycor())
+  if (running == False):
+    runBall.stop()
+    runBall2.start()
+def releaseKey():
+  plyMoving = False
+  if (running == False):
+    runBall2.stop()
+    runball.start()
+
 
 ply = trtl.Turtle()
 ply.shape(playerImg)
@@ -49,13 +75,21 @@ ball.setpos(ply.xcor(), -290)
 dir = rand.randint(0,1)
 if (dir == 0):
   ball.left(45)
+  plyMoving = True
 elif (dir == 1):
-  ball.right(45)
+  ball.left(135)
+  plyMoving = True
+
+runBall.start()
 
 wn.onkeypress(paddleLeft, "a")
 wn.onkeypress(paddleRight, "d")
 wn.onkeypress(paddleLeft, "Left")
 wn.onkeypress(paddleRight, "Right")
+wn.onkeyrelease(releaseKey, "a")
+wn.onkeyrelease(releaseKey, "d")
+wn.onkeyrelease(releaseKey, "Left")
+wn.onkeyrelease(releaseKey, "Right")
 
 wn.listen()
 wn.mainloop()
