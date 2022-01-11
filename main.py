@@ -2,6 +2,7 @@
 import turtle as trtl
 import random as rand
 import threading
+import time
 
 # Init. turtle stuff
 wn = trtl.Screen()
@@ -26,8 +27,9 @@ blocksGap = 10
 blocksNumX = 7
 blocksNumY = 3
 
-plyMoving = False
-running = False
+ballSpeed = 4
+
+started = False
 
 # Functions
 def spawnBlock(): # Spawn and initialize blocks
@@ -53,11 +55,11 @@ def gameSpawn():
         counterY+=1
         currentY+=incrementY
         if counterY==0:
-            currentShape="img/green.gif"
+            currentShape=blocksImg
         elif counterY==1:
-            currentShape="img/yellow.gif"
+            pass
         elif counterY==2:
-            currentShape="img/red.gif"
+            pass
         while counterX<7:
             counterX+=1
             blockName=str(counterX),str(counterY)
@@ -69,27 +71,22 @@ def gameSpawn():
         currentX+=blocksWd/2
 
 def moveBall():
-  running = True
-  while (True and running):
-    if (plyMoving):
-      ball.forward(4)
-      print(plyMoving)
-    else:
-      ball.forward(2)
-      print(plyMoving)
+  global started
+  started = True
+  while True:
+    ball.forward(ballSpeed)
 runBall = threading.Thread(target=moveBall)
 
 def paddleLeft(): # Move player left and right
+  if (started == False):
+    runBall.start()
   ply.goto(ply.xcor()-15,ply.ycor())
-  if (running == False):
-    runBall.start()
+  ball.forward(ballSpeed)
 def paddleRight():
-  ply.goto(ply.xcor()+15,ply.ycor())
-  if (running == False):
+  if (started == False):
     runBall.start()
-def releaseKey():
-  global plyMoving
-  plyMoving = False
+  ply.goto(ply.xcor()+15,ply.ycor())
+  ball.forward(ballSpeed)
 
 
 ply = trtl.Turtle()
@@ -106,19 +103,13 @@ ball.setpos(ply.xcor(), -290)
 dir = rand.randint(0,1)
 if (dir == 0):
   ball.left(45)
-  plyMoving = True
 elif (dir == 1):
   ball.left(135)
-  plyMoving = True
 
 wn.onkeypress(paddleLeft, "a")
 wn.onkeypress(paddleRight, "d")
 wn.onkeypress(paddleLeft, "Left")
 wn.onkeypress(paddleRight, "Right")
-wn.onkeyrelease(releaseKey, "a")
-wn.onkeyrelease(releaseKey, "d")
-wn.onkeyrelease(releaseKey, "Left")
-wn.onkeyrelease(releaseKey, "Right")
 
 wn.listen()
 wn.mainloop()
