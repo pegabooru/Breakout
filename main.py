@@ -1,8 +1,7 @@
-# Imports
+#Imports
 import turtle as trtl
 import random as rand
 import threading
-import time
 
 # Init. turtle stuff
 wn = trtl.Screen()
@@ -66,6 +65,21 @@ def gameSpawn(): # Spawn blocks and stuff
       counterX=0
       counterY+=1
 
+deaths=0
+daed=trtl.Turtle()
+daed.hideturtle()
+daed.goto(-100,-300)
+daed.write("Lives lost: " + str(deaths), ["Red", 20, "Aerial"])
+def death():
+    daed.goto(-100,-300)
+    global deaths,fonta
+    daed.clear()
+    ball.setheading(0)
+    ball.left(rand.randint(30,150))
+    ball.goto(ply.xcor(),-290)
+    deaths+=1
+    daed.write("Lives lost: " + str(deaths), ["Red", 20, "Aerial"])
+
 def ballCollideH():
   degree = (180-ball.heading())*2
   ball.setheading(ball.heading()+degree)
@@ -102,9 +116,7 @@ def moveBall(): # Move ball, called constantly
     elif ball.ycor()>380:
       ballCollideH()
     elif ball.ycor()<-500:
-      ball.setheading(0)
-      ball.left(rand.randint(30,150))
-      ball.goto(ply.xcor(),-290)
+        death()
     ball.forward(ballSpeed)
 runBall = threading.Thread(target=moveBall)
 
@@ -114,14 +126,12 @@ def paddleLeft(): # Move player left and right
   if (ply.xcor() != -450):
     ply.goto(ply.xcor()-30,ply.ycor())
   ball.forward(ballSpeed*2)
-  print(ply.xcor())
 def paddleRight():
   if (started == False):
     runBall.start()
   if (ply.xcor() != 450):
     ply.goto(ply.xcor()+30,ply.ycor())
   ball.forward(ballSpeed*2)
-  print(ply.xcor())
 
 
 border = trtl.Turtle()
