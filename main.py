@@ -8,38 +8,31 @@ import time
 wn = trtl.Screen()
 wn.bgcolor('black')
 # Add images
-blocksImg = "img/green.gif"
+blocksGreen = "img/green.gif"
+blocksYellow = "img/yellow.gif"
+blocksRed = "img/red.gif"
 playerImg = "img/paddle.gif"
 ballImg = "img/ball.gif"
-wn.addshape(blocksImg)
-wn.addshape("img/yellow.gif")
-wn.addshape("img/red.gif")
+wn.addshape(blocksGreen)
+wn.addshape(blocksYellow)
+wn.addshape(blocksRed)
 wn.addshape(playerImg)
 wn.addshape(ballImg)
 
 # Init global variables before start
 blocks = []
-blocksX = []
-blocksY = []
 blocksWd = 50
 blocksHt = 20
 blocksGap = 4
 blocksNumX = 17
-blocksNumY = 7
+blocksNumY = 3
 
-ballSpeed = 4
+ballSpeed = 8
 
 started = False
 
 # Functions
-def spawnBlock(): # Spawn and initialize blocks
-  block = trtl.Turtle()
-  block.shape(blocksImg)
-  block.penup()
-  block.speed(0)
-  blocks.append(block)
- 
-def gameSpawn():
+def gameSpawn(): # Spawn blocks and stuff
     global blocksWd, blocksHt, blocksGap, blocksNumX, blocksNumY
     totalWd = (blocksNumX*blocksWd)+((blocksNumX-1)*blocksGap)
     totalHt = (blocksNumY*blocksHt)+((blocksNumY-1)*blocksGap)
@@ -52,41 +45,70 @@ def gameSpawn():
     counterX=0
     counterY=0
     while counterY<blocksNumY:
-        counterY+=1
-        currentY+=incrementY
-        if counterY==0:
-            currentShape="img/green.gif"
-        elif counterY==1:
-            currentShape="img/yellow.gif"
-        elif counterY==2:
-            currentShape="img/red.gif"
-        while counterX<blocksNumX:
-            counterX+=1
-            blockName=str(counterX),str(counterY)
-            blockName=trtl.Turtle
-            blockName.goto(currentX,currentY)
-            blockName.shape(currentShape)
-            currentX+=incrementX
-        currentX=(-totalWd)/2
-        currentX+=blocksWd/2
+      if counterY==0:
+          currentShape = blocksRed
+      elif counterY==1:
+          currentShape = blocksYellow
+      elif counterY==2:
+          currentShape = blocksGreen
+      while counterX<blocksNumX:
+          block=trtl.Turtle()
+          blocks.append(block)
+          block.speed(0)
+          block.penup()
+          block.goto(currentX,currentY)
+          block.shape(currentShape)
+          currentX+=incrementX
+          counterX+=1
+      currentX=(-totalWd)/2
+      currentX+=blocksWd/2
+      currentY+=incrementY
+      counterX=0
+      counterY+=1
 
-def moveBall():
+def ballCollideH():
+  degree = (180-ball.heading())*2
+  ball.setheading(ball.heading()+degree)
+  ball.forward(10)
+def ballCollideV():
+  degree = (90-ball.heading())*2
+  ball.setheading(ball.heading()+degree)
+  ball.forward(10)
+def moveBall(): # Move ball, called constantly
   global started
   started = True
   while True:
+    for i in range(len(blocks)):
+      if ball.xcor() < ply.xcor()-30 + 60 and\
+          ball.xcor() + 10 > ply.xcor()-30 and\
+          ball.ycor() < ply.ycor() + 10 and\
+          ball.ycor() + 10 > ply.ycor():
+        ballCollideH()
+      elif ball.xcor() < blocks[i].xcor()-25 + 50 and\
+          ball.xcor() + 10 > blocks[i].xcor()-25 and\
+          ball.ycor() < blocks[i].ycor() + 20 and\
+          ball.ycor() + 10 > blocks[i].ycor():
+        blocks[i].goto(1000,1000)
+        ballCollideH()
+    if ball.xcor()<-475:
+      ballCollideV()
+    elif ball.xcor()>475:
+      ballCollideV()
+    elif ball.ycor()>375:
+      ballCollideH()
     ball.forward(ballSpeed)
 runBall = threading.Thread(target=moveBall)
 
 def paddleLeft(): # Move player left and right
   if (started == False):
     runBall.start()
-  ply.goto(ply.xcor()-15,ply.ycor())
-  ball.forward(ballSpeed)
+  ply.goto(ply.xcor()-30,ply.ycor())
+  ball.forward(ballSpeed*2)
 def paddleRight():
   if (started == False):
     runBall.start()
-  ply.goto(ply.xcor()+15,ply.ycor())
-  ball.forward(ballSpeed)
+  ply.goto(ply.xcor()+30,ply.ycor())
+  ball.forward(ballSpeed*2)
 
 
 ply = trtl.Turtle()
@@ -100,11 +122,10 @@ ball.shape(ballImg)
 ball.penup()
 ball.speed(0)
 ball.setpos(ply.xcor(), -290)
-dir = rand.randint(0,1)
-if (dir == 0):
-  ball.left(45)
-elif (dir == 1):
-  ball.left(135)
+ball.left(rand.randint(30,150))
+
+print(wn.screensize())
+gameSpawn()
 
 wn.onkeypress(paddleLeft, "a")
 wn.onkeypress(paddleRight, "d")
