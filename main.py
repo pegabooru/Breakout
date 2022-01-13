@@ -99,22 +99,44 @@ def moveBall(): # Move ball, called constantly
       ballCollideV()
     elif ball.xcor()>475:
       ballCollideV()
-    elif ball.ycor()>375:
+    elif ball.ycor()>380:
       ballCollideH()
+    elif ball.ycor()<-500:
+      ball.setheading(0)
+      ball.left(rand.randint(30,150))
+      ball.goto(ply.xcor(),-290)
     ball.forward(ballSpeed)
 runBall = threading.Thread(target=moveBall)
 
 def paddleLeft(): # Move player left and right
   if (started == False):
     runBall.start()
-  ply.goto(ply.xcor()-30,ply.ycor())
+  if (ply.xcor() != -450):
+    ply.goto(ply.xcor()-30,ply.ycor())
   ball.forward(ballSpeed*2)
+  print(ply.xcor())
 def paddleRight():
   if (started == False):
     runBall.start()
-  ply.goto(ply.xcor()+30,ply.ycor())
+  if (ply.xcor() != 450):
+    ply.goto(ply.xcor()+30,ply.ycor())
   ball.forward(ballSpeed*2)
+  print(ply.xcor())
 
+
+border = trtl.Turtle()
+border.pencolor("white")
+border.pensize(8)
+border.penup()
+border.speed(0)
+border.setpos(-482, -500)
+border.pendown()
+border.left(90)
+border.forward(908)
+border.right(90)
+border.forward(960)
+border.right(90)
+border.forward(1000)
 
 ply = trtl.Turtle()
 ply.shape(playerImg)
@@ -129,7 +151,6 @@ ball.speed(0)
 ball.setpos(ply.xcor(), -290)
 ball.left(rand.randint(30,150))
 
-print(wn.screensize())
 gameSpawn()
 
 wn.onkeypress(paddleLeft, "a")
