@@ -25,9 +25,9 @@ blocksWd = 50
 blocksHt = 20
 blocksGap = 4
 blocksNumX = 17
-blocksNumY = 3
+blocksNumY = 5
 
-ballSpeed = 8
+ballSpeed = 6
 
 started = False
 
@@ -47,9 +47,9 @@ def gameSpawn(): # Spawn blocks and stuff
     while counterY<blocksNumY:
       if counterY==0:
           currentShape = blocksRed
-      elif counterY==1:
-          currentShape = blocksYellow
       elif counterY==2:
+          currentShape = blocksYellow
+      elif counterY==4:
           currentShape = blocksGreen
       while counterX<blocksNumX:
           block=trtl.Turtle()
@@ -73,7 +73,7 @@ def ballCollideH():
 def ballCollideV():
   degree = (90-ball.heading())*2
   ball.setheading(ball.heading()+degree)
-  ball.forward(10)
+  ball.forward(12)
 def moveBall(): # Move ball, called constantly
   global started
   started = True
@@ -88,7 +88,12 @@ def moveBall(): # Move ball, called constantly
           ball.xcor() + 10 > blocks[i].xcor()-25 and\
           ball.ycor() < blocks[i].ycor() + 20 and\
           ball.ycor() + 10 > blocks[i].ycor():
-        blocks[i].goto(1000,1000)
+        if (blocks[i].shape() == "img/red.gif"):
+          blocks[i].goto(1000,1000)
+        elif (blocks[i].shape() == "img/yellow.gif"):
+          blocks[i].shape("img/red.gif")
+        elif (blocks[i].shape() == "img/green.gif"):
+          blocks[i].shape("img/yellow.gif")
         ballCollideH()
     if ball.xcor()<-475:
       ballCollideV()
