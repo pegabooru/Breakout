@@ -24,11 +24,11 @@ blocksWd = 50
 blocksHt = 20
 blocksGap = 4
 blocksNumX = 17
-blocksNumY = 1
+blocksNumY = 5
 blocksTotal = blocksNumX * blocksNumY
 
-ballSpeed = 6
-
+ballSpeed = 10
+playerDir="None"
 started = False
 
 # Functions
@@ -121,11 +121,18 @@ def ballCollideV():
   ball.setheading(ball.heading()+degree)
   ball.forward(12)
 def moveBall(): # Move ball, called constantly
-  global started
+  global started, playerDir
   started = True
   while (True and blocksTotal != 0):
     detectCollision()
     ball.forward(ballSpeed)
+    if playerDir=="None":
+        ply.goto(ply.xcor(),ply.ycor())
+    if playerDir=="Left":
+        ply.goto(ply.xcor()-30,ply.ycor())
+    if playerDir=="Right":
+        ply.goto(ply.xcor()+30,ply.ycor())
+    playerDir="None"
   complete=trtl.Turtle()
   complete.color("White")
   complete.penup()
@@ -133,17 +140,20 @@ def moveBall(): # Move ball, called constantly
   complete.write('Game Complete', font=('Courier', 30, 'bold'), align='center')
   
 runBall = threading.Thread(target=moveBall)
-
 def paddleLeft(): # Move player left and right
+  global playerDir
   if (started == False):
     runBall.start()
   if (ply.xcor() != -450):
-    ply.goto(ply.xcor()-30,ply.ycor())
+    playerDir="Left"
+    #ply.goto(ply.xcor()-30,ply.ycor())
 def paddleRight():
+  global playerDir
   if (started == False):
     runBall.start()
   if (ply.xcor() != 450):
-    ply.goto(ply.xcor()+30,ply.ycor())
+    playerDir="Right"
+    #ply.goto(ply.xcor()+30,ply.ycor())
 
 
 border = trtl.Turtle()
