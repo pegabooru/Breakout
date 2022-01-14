@@ -25,9 +25,9 @@ blocksHt = 20
 blocksGap = 4
 blocksNumX = 17
 blocksNumY = 5
-blocksTotal = blocksNumX * blocksNumY
+blocksTotal = blocksNumX * blocksNumY + 1
 
-ballSpeed = 10
+ballSpeed = 12
 playerDir="None"
 started = False
 
@@ -66,14 +66,25 @@ def gameSpawn(): # Spawn blocks and stuff
       counterX=0
       counterY+=1
 
-deaths=0
+def gameWrite(msg, color):
+  if started != False:
+    text=trtl.Turtle()
+    text.color(color)
+    text.penup()
+    text.hideturtle()
+    text.write(msg, font=('Courier', 30, 'bold'), align='center')
+    text.hideturtle()
+
+lives=3
 daed=trtl.Turtle()
 daed.color("White")
 daed.penup()
 daed.hideturtle()
 daed.goto(-400,-320)
-daed.write('Lives lost: ' + str(deaths), font=('Courier', 10, 'bold'), align='center')
+daed.write('Lives: ' + str(lives), font=('Courier', 10, 'bold'), align='center')
 def death():
+  global lives, started
+  if (lives != 0):
     daed.penup()
     daed.goto(-400,-320)
     global deaths,fonta
@@ -81,8 +92,11 @@ def death():
     ball.setheading(0)
     ball.left(rand.randint(30,150))
     ball.goto(ply.xcor(),-290)
-    deaths+=1
-    daed.write('Lives lost: ' + str(deaths), font=('Courier', 10, 'bold'), align='center')
+    lives-=1
+    daed.write('Lives: ' + str(lives), font=('Courier', 10, 'bold'), align='center')
+  else:
+    gameWrite('Game Over', 'red')
+    started = False
 
 def detectCollision():
   global blocksTotal
@@ -123,37 +137,32 @@ def ballCollideV():
 def moveBall(): # Move ball, called constantly
   global started, playerDir
   started = True
-  while (True and blocksTotal != 0):
+  while (True and blocksTotal != 1):
     detectCollision()
     ball.forward(ballSpeed)
-    if playerDir=="None":
-        ply.goto(ply.xcor(),ply.ycor())
-    if playerDir=="Left":
-        ply.goto(ply.xcor()-30,ply.ycor())
-    if playerDir=="Right":
-        ply.goto(ply.xcor()+30,ply.ycor())
-    playerDir="None"
-  complete=trtl.Turtle()
-  complete.color("White")
-  complete.penup()
-  complete.hideturtle()
-  complete.write('Game Complete', font=('Courier', 30, 'bold'), align='center')
+    if playerDir == 'None':
+      ply.goto(ply.xcor(), ply.ycor())
+    if playerDir == 'Left':
+      ply.goto(ply.xcor()-30, ply.ycor())
+    if playerDir == 'Right':
+      ply.goto(ply.xcor()+30, ply.ycor())
+    playerDir = 'None'
+  gameWrite('Game Complete', 'green')
   
 runBall = threading.Thread(target=moveBall)
+
 def paddleLeft(): # Move player left and right
   global playerDir
   if (started == False):
     runBall.start()
   if (ply.xcor() != -450):
-    playerDir="Left"
-    #ply.goto(ply.xcor()-30,ply.ycor())
+    playerDir = 'Left'
 def paddleRight():
   global playerDir
   if (started == False):
     runBall.start()
   if (ply.xcor() != 450):
-    playerDir="Right"
-    #ply.goto(ply.xcor()+30,ply.ycor())
+    playerDir = 'Right'
 
 
 border = trtl.Turtle()
@@ -164,7 +173,7 @@ border.speed(0)
 border.setpos(-482, -500)
 border.pendown()
 border.left(90)
-border.forward(908)
+border.forward(910)
 border.right(90)
 border.forward(960)
 border.right(90)
