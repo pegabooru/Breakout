@@ -67,23 +67,52 @@ def gameSpawn(): # Spawn blocks and stuff
 
 deaths=0
 daed=trtl.Turtle()
+daed.color("White")
+daed.penup()
 daed.hideturtle()
-daed.goto(-100,-300)
-daed.write("Lives lost: " + str(deaths), ["Red", 20, "Aerial"])
+daed.goto(-400,-320)
+daed.write('Lives lost: ' + str(deaths), font=('Courier', 10, 'bold'), align='center')
 def death():
-    daed.goto(-100,-300)
+    daed.penup()
+    daed.goto(-400,-320)
     global deaths,fonta
     daed.clear()
     ball.setheading(0)
     ball.left(rand.randint(30,150))
     ball.goto(ply.xcor(),-290)
     deaths+=1
-    daed.write("Lives lost: " + str(deaths), ["Red", 20, "Aerial"])
+    daed.write('Lives lost: ' + str(deaths), font=('Courier', 10, 'bold'), align='center')
 
+def detectCollision():
+  for i in range(len(blocks)):
+    if ball.xcor() < ply.xcor()-30 + 60 and\
+        ball.xcor() + 10 > ply.xcor()-30 and\
+        ball.ycor() < ply.ycor() + 10 and\
+        ball.ycor() + 10 > ply.ycor():
+      ballCollideH()
+    elif ball.xcor() < blocks[i].xcor()-25 + 50 and\
+        ball.xcor() + 10 > blocks[i].xcor()-25 and\
+        ball.ycor() < blocks[i].ycor() + 20 and\
+        ball.ycor() + 10 > blocks[i].ycor():
+      if (blocks[i].shape() == "img/red.gif"):
+        blocks[i].goto(1000,1000)
+      elif (blocks[i].shape() == "img/yellow.gif"):
+        blocks[i].shape("img/red.gif")
+      elif (blocks[i].shape() == "img/green.gif"):
+        blocks[i].shape("img/yellow.gif")
+      ballCollideH()
+  if ball.xcor()<-475:
+    ballCollideV()
+  elif ball.xcor()>475:
+    ballCollideV()
+  elif ball.ycor()>380:
+    ballCollideH()
+  elif ball.ycor()<-500:
+      death()
 def ballCollideH():
   degree = (180-ball.heading())*2
   ball.setheading(ball.heading()+degree)
-  ball.forward(10)
+  ball.forward(12)
 def ballCollideV():
   degree = (90-ball.heading())*2
   ball.setheading(ball.heading()+degree)
@@ -92,31 +121,7 @@ def moveBall(): # Move ball, called constantly
   global started
   started = True
   while True:
-    for i in range(len(blocks)):
-      if ball.xcor() < ply.xcor()-30 + 60 and\
-          ball.xcor() + 10 > ply.xcor()-30 and\
-          ball.ycor() < ply.ycor() + 10 and\
-          ball.ycor() + 10 > ply.ycor():
-        ballCollideH()
-      elif ball.xcor() < blocks[i].xcor()-25 + 50 and\
-          ball.xcor() + 10 > blocks[i].xcor()-25 and\
-          ball.ycor() < blocks[i].ycor() + 20 and\
-          ball.ycor() + 10 > blocks[i].ycor():
-        if (blocks[i].shape() == "img/red.gif"):
-          blocks[i].goto(1000,1000)
-        elif (blocks[i].shape() == "img/yellow.gif"):
-          blocks[i].shape("img/red.gif")
-        elif (blocks[i].shape() == "img/green.gif"):
-          blocks[i].shape("img/yellow.gif")
-        ballCollideH()
-    if ball.xcor()<-475:
-      ballCollideV()
-    elif ball.xcor()>475:
-      ballCollideV()
-    elif ball.ycor()>380:
-      ballCollideH()
-    elif ball.ycor()<-500:
-        death()
+    detectCollision()
     ball.forward(ballSpeed)
 runBall = threading.Thread(target=moveBall)
 
@@ -125,13 +130,11 @@ def paddleLeft(): # Move player left and right
     runBall.start()
   if (ply.xcor() != -450):
     ply.goto(ply.xcor()-30,ply.ycor())
-  ball.forward(ballSpeed*2)
 def paddleRight():
   if (started == False):
     runBall.start()
   if (ply.xcor() != 450):
     ply.goto(ply.xcor()+30,ply.ycor())
-  ball.forward(ballSpeed*2)
 
 
 border = trtl.Turtle()
