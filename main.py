@@ -24,7 +24,8 @@ blocksWd = 50
 blocksHt = 20
 blocksGap = 4
 blocksNumX = 17
-blocksNumY = 5
+blocksNumY = 1
+blocksTotal = blocksNumX * blocksNumY
 
 ballSpeed = 6
 
@@ -84,6 +85,7 @@ def death():
     daed.write('Lives lost: ' + str(deaths), font=('Courier', 10, 'bold'), align='center')
 
 def detectCollision():
+  global blocksTotal
   for i in range(len(blocks)):
     if ball.xcor() < ply.xcor()-30 + 60 and\
         ball.xcor() + 10 > ply.xcor()-30 and\
@@ -96,6 +98,7 @@ def detectCollision():
         ball.ycor() + 10 > blocks[i].ycor():
       if (blocks[i].shape() == "img/red.gif"):
         blocks[i].goto(1000,1000)
+        blocksTotal -= 1
       elif (blocks[i].shape() == "img/yellow.gif"):
         blocks[i].shape("img/red.gif")
       elif (blocks[i].shape() == "img/green.gif"):
@@ -120,9 +123,15 @@ def ballCollideV():
 def moveBall(): # Move ball, called constantly
   global started
   started = True
-  while True:
+  while (True and blocksTotal != 0):
     detectCollision()
     ball.forward(ballSpeed)
+  complete=trtl.Turtle()
+  complete.color("White")
+  complete.penup()
+  complete.hideturtle()
+  complete.write('Game Complete', font=('Courier', 30, 'bold'), align='center')
+  
 runBall = threading.Thread(target=moveBall)
 
 def paddleLeft(): # Move player left and right
