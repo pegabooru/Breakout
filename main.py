@@ -23,19 +23,17 @@ blocks = []
 blocksWd = 50
 blocksHt = 20
 blocksGap = 4
-blocksNumX = 17
-blocksNumY = 5
-blocksTotal = blocksNumX * blocksNumY + 1
 
 ballSpeed = 12
 playerDir="None"
 started = False
 
 # Functions
-def gameSpawn(): # Spawn blocks and stuff
-    global blocksWd, blocksHt, blocksGap, blocksNumX, blocksNumY
-    totalWd = (blocksNumX*blocksWd)+((blocksNumX-1)*blocksGap)
-    totalHt = (blocksNumY*blocksHt)+((blocksNumY-1)*blocksGap)
+def gameSpawn(nX, nY): # Spawn blocks and stuff
+    global blocksWd, blocksHt, blocksGap, blocksTotal
+    blocksTotal = nX * nY + 1
+    totalWd = (nX*blocksWd)+((nX-1)*blocksGap)
+    totalHt = (nY*blocksHt)+((nY-1)*blocksGap)
     incrementX=blocksWd+blocksGap
     incrementY=blocksHt+blocksGap
     currentX=(-totalWd)/2
@@ -44,14 +42,14 @@ def gameSpawn(): # Spawn blocks and stuff
     currentY+=blocksHt/2
     counterX=0
     counterY=0
-    while counterY<blocksNumY:
+    while counterY<nY:
       if counterY==0:
           currentShape = blocksRed
       elif counterY==2:
           currentShape = blocksYellow
       elif counterY==4:
           currentShape = blocksGreen
-      while counterX<blocksNumX:
+      while counterX<nX:
           block=trtl.Turtle()
           blocks.append(block)
           block.speed(0)
@@ -192,7 +190,7 @@ ball.speed(0)
 ball.setpos(ply.xcor(), -290)
 ball.left(rand.randint(30,150))
 
-gameSpawn()
+gameSpawn(17, 5)
 
 wn.onkeypress(paddleLeft, "a")
 wn.onkeypress(paddleRight, "d")
