@@ -23,6 +23,7 @@ blocks = []
 blocksWd = 50
 blocksHt = 20
 blocksGap = 4
+columns = 5
 
 ballSpeed = 12
 playerDir="None"
@@ -48,6 +49,10 @@ def gameSpawn(nX, nY): # Spawn blocks and stuff
       elif counterY==2:
           currentShape = blocksYellow
       elif counterY==4:
+          currentShape = blocksGreen
+      elif counterY==6:
+          currentShape = blocksGreen
+      elif counterY==8:
           currentShape = blocksGreen
       while counterX<nX:
           block=trtl.Turtle()
@@ -133,7 +138,7 @@ def ballCollideV():
   ball.setheading(ball.heading()+degree)
   ball.forward(12)
 def moveBall(): # Move ball, called constantly
-  global started, playerDir
+  global started, playerDir, ply, ball, columns
   started = True
   while (True and blocksTotal != 1):
     detectCollision()
@@ -146,6 +151,31 @@ def moveBall(): # Move ball, called constantly
       ply.goto(ply.xcor()+30, ply.ycor())
     playerDir = 'None'
   gameWrite('Game Complete', 'green')
+
+  columns += 2
+
+  ply.reset()
+
+  ply = trtl.Turtle()
+  ply.shape(playerImg)
+  ply.penup()
+  ply.speed(0)
+  ply.setpos(ply.xcor(), -300)
+
+  ply.clear()
+  ply.reset()
+  ball.clear()
+  ball.reset()
+
+  ball = trtl.Turtle()
+  ball.shape(ballImg)
+  ball.penup()
+  ball.speed(0)
+  ball.setpos(ply.xcor(), -290)
+  ball.left(rand.randint(30,150))
+
+  gameSpawn(17, columns)
+  started = True
   
 runBall = threading.Thread(target=moveBall)
 
@@ -190,7 +220,7 @@ ball.speed(0)
 ball.setpos(ply.xcor(), -290)
 ball.left(rand.randint(30,150))
 
-gameSpawn(17, 5)
+gameSpawn(17, columns)
 
 wn.onkeypress(paddleLeft, "a")
 wn.onkeypress(paddleRight, "d")
